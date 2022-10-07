@@ -3,6 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <Version>0.1.1</Version>
+    <Authors>David Janousek</Authors>
+    <RepositoryUrl>https://github.com/entity-system/EntitySystem</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
 
@@ -15,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EntitySystem.Client.Abstract\EntitySystem.Client.Abstract.csproj" />
-    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Input\EntitySystem.Client.Components.Data.Input.csproj" />
-    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Table\EntitySystem.Client.Components.Data.Table.csproj" />
-    <ProjectReference Include="..\EntitySystem.Shared\EntitySystem.Shared.csproj" />
+    <ProjectReference Include="..\EntitySystem.Client.Abstract\EntitySystem.Client.Abstract.csproj"/>
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Input\EntitySystem.Client.Components.Data.Input.csproj"/>
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Table\EntitySystem.Client.Components.Data.Table.csproj"/>
+    <ProjectReference Include="..\EntitySystem.Shared\EntitySystem.Shared.csproj"/>
   </ItemGroup>
 
 </Project>

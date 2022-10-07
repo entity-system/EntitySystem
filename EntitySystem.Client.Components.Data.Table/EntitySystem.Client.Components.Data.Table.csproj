@@ -1,9 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+		<Version>0.1.1</Version>
+		<Authors>David Janousek</Authors>
+		<RepositoryUrl>https://github.com/entity-system/EntitySystem</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	</PropertyGroup>
 
 
   <ItemGroup>
@@ -16,9 +20,9 @@
 
   
   <ItemGroup>
-    <ProjectReference Include="..\EntitySystem.Client.Abstract\EntitySystem.Client.Abstract.csproj" />
-    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Record.Info\EntitySystem.Client.Components.Data.Record.Info.csproj" />
-    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Record.List\EntitySystem.Client.Components.Data.Record.List.csproj" />
+    <ProjectReference Include="..\EntitySystem.Client.Abstract\EntitySystem.Client.Abstract.csproj"/>
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Record.Info\EntitySystem.Client.Components.Data.Record.Info.csproj"/>
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Record.List\EntitySystem.Client.Components.Data.Record.List.csproj"/>
   </ItemGroup>
 
 </Project>

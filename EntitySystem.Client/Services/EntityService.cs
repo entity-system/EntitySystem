@@ -27,7 +27,7 @@ public class EntityService<TEntity> : IEntityService<TEntity> where TEntity : IE
         _httpClient = serviceProvider.GetService<HttpClient>();
         _exceptionService = serviceProvider.GetService<IExceptionService>();
 
-        Uri = $"/api{uri}";
+        Uri = uri;
     }
 
     public virtual async Task<TEntity> PutAsync(TEntity entity)
