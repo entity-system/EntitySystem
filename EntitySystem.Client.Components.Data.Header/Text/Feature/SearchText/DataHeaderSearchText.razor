@@ -1,0 +1,15 @@
+﻿@using EntitySystem.Client.Components.Form.Input.Search
+
+@typeparam TEntity
+@inherits BaseDataHeaderSearchText<TEntity>
+
+<form class="px-2 py-1">
+    <FormInputSearch OnFocus="@OnSearchAsync" OnSearch="@OnSearchAsync" Placeholder="Search"/>
+	<div class="list-group" style="position: fixed; z-index: 1;">
+		@foreach (var item in GetItems())
+		{
+			@item.Render()
+		}
+	</div>
+</form>
+<div class="dropdown-divider"></div>

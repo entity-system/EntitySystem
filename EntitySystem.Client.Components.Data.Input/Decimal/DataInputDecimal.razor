@@ -1,0 +1,16 @@
+﻿@using EntitySystem.Client.Components.Data.Input.Decimal.Property
+@using Microsoft.AspNetCore.Components.Forms
+@using EntitySystem.Client.Abstract.Components
+
+@typeparam TEntity
+@inherits BaseRendered<BaseDataInput<IDataInputDecimalProperty<TEntity>, TEntity, decimal>>
+
+<InputNumber disabled="@Parameters.ReadOnly" readonly="@Parameters.ReadOnly" type="number" @bind-Value="@Value" class="form-control form-control-sm" id="@Parameters.Guid"/>
+
+@code {
+	public decimal Value
+	{
+		get => Parameters.GetValue();
+		set => Parameters.SetValue(value);
+	}
+}

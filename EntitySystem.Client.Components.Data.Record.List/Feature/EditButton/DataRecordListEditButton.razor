@@ -1,0 +1,7 @@
+﻿@using EntitySystem.Client.Components.Data.Record.List.Entity.Dialog
+
+@typeparam TKey
+@inherits BaseDataRecordListEntityDialog<TKey>
+
+<button type="button" class="btn btn-outline-primary me-1" @onclick="OnOpen">Edit</button>
+<span style="font-size: 1rem">@EntityDialogRenderer?.Render()</span>

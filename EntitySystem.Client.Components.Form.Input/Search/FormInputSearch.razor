@@ -1,0 +1,53 @@
+﻿@using System.Timers
+
+<input type="text" placeholder="@Placeholder" @bind="@Search" @oninput="Input" @onfocus="FocusAsync" class="form-control @(Smaller ? "form-control-sm" : string.Empty)" aria-describedby="button-addon-search" id="@Guid"/>
+
+@code {
+	[Parameter]
+	public Guid Guid { get; set; } = Guid.NewGuid();
+
+	[Parameter]
+	public bool Smaller { get; set; }
+
+	[Parameter]
+	public string Placeholder { get; set; }
+
+	[Parameter]
+	public EventCallback<string> OnFocus { get; set; }
+
+	[Parameter]
+	public EventCallback<string> OnSearch { get; set; }
+
+    [Parameter]
+	public string Search { get; set; } = string.Empty;
+
+	private Timer _searchTimer;
+
+	protected override void OnInitialized()
+	{
+		_searchTimer = new Timer(500);
+
+		_searchTimer.Elapsed += SearchElapsed;
+	}
+
+	void Input(ChangeEventArgs args)
+	{
+		_searchTimer.Stop();
+
+		Search = (string)args.Value;
+
+		_searchTimer.Start();
+	}
+
+	async Task FocusAsync(FocusEventArgs args)
+	{
+		await OnFocus.InvokeAsync(Search);
+	}
+
+    async void SearchElapsed(object sender, ElapsedEventArgs e)
+	{
+		_searchTimer.Stop();
+
+		await OnSearch.InvokeAsync(Search);
+	}
+}

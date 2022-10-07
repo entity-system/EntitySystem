@@ -1,0 +1,56 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Abstract.Domain.Renderer
+@using EntitySystem.Client.Components.Data.Entity.Dialog.Options
+@using EntitySystem.Client.Components.Data.Entity.Dialog.Source
+
+@typeparam TEntity
+@inherits BaseRendered<BaseDataRecordInfo<TEntity>>
+@implements IDataEntityDialogOptions<TEntity>
+
+@code
+{
+	public TEntity Entity => Parameters.Key;
+
+	public virtual IRenderer EntityDialogRenderer { get; set; }
+
+	public IEntityDialogSource<TEntity> GetEntityDialogSource()
+	{
+		return Parameters.Source;
+	}
+
+	public void OnOpen()
+	{
+		EntityDialogRenderer = Parameters.Source.BuildEntityDialog(this);
+	}
+
+	public async Task OnCloseAsync()
+	{
+		EntityDialogRenderer = null;
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public async Task<TEntity> CreateEntityAsync()
+	{
+		var entity = await Parameters.Source.CreateEntityAsync();
+
+		return entity;
+	}
+
+	public async Task OnBeforeSaveOrUpdateAsync(TEntity entity)
+	{
+		await Parameters.Options.OnBeforeSaveOrUpdateAsync(entity);
+	}
+
+	public async Task OnAfterUpdateAsync()
+	{
+		EntityDialogRenderer = null;
+
+		await Parameters.Options.OnRefreshAsync();
+	}
+
+	public Task OnAfterSaveAsync(TEntity entity)
+	{
+		throw new NotImplementedException();
+	}
+}

@@ -1,0 +1,26 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Record.Info.Feature.BackButton
+
+@typeparam TKey
+@inherits BaseRendered<BaseDataRecordInfo<TKey>>
+
+@inject NavigationManager _navigationManager
+
+<button type="button" class="btn btn-outline-primary me-1" @onclick="@OnDeleteAsync">Delete</button>
+
+@code
+{
+	public async Task OnDeleteAsync()
+	{
+		await Parameters.Source.DeleteAsync(Parameters.Key);
+
+		if (Parameters.Source.Features.GetFeature<DataRecordInfoEnableBackFeature<TKey>>() is not { } backFeature)
+		{
+			await Parameters.Options.OnRefreshAsync();
+
+			return;
+		}
+
+		_navigationManager.NavigateTo(backFeature.Options.LinkFactory(Parameters.Key));
+	}
+}

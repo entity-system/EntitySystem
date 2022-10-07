@@ -1,0 +1,56 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Record.List.Item
+@using EntitySystem.Client.Components.Data.Record.List.Source
+@using EntitySystem.Client.Components.Data.Table.Join.Parameters
+@using EntitySystem.Client.Components.Data.Table.Join.Record
+@using EntitySystem.Client.Components.Data.Record.List.Options
+@using EntitySystem.Client.Components.Data.Table.Join.Source
+
+@typeparam TParent
+@typeparam TChild
+@inherits BaseRendered<DataTableJoinParameters<TParent, TChild>>
+@implements IDataRecordListOptions<TChild>
+
+@code {
+	public virtual IDataTableJoinRecord<TParent> ParentRecord => Parameters.Options.GetJoinRecord();
+
+	public virtual IDataTableJoinSource<TChild> ChildSource => Parameters.Join.GetTableJoinChildSource();
+
+	public virtual IList<IDataTableJoinRecord<TChild>> ChildRecords { get; set; } = Enumerable.Empty<IDataTableJoinRecord<TChild>>().ToArray();
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await LoadChildRecordsAsync();
+	}
+
+	public virtual IDataRecordListSource<TChild> GetRecordListSource()
+	{
+		return Parameters.Join.GetTableJoinChildSource();
+	}
+
+	public virtual IEnumerable<IDataRecordListItem<TChild>> GetRecordListItems()
+	{
+		return ChildRecords;
+	}
+
+	public virtual async Task OnAfterCreateEntityAsync(TChild child)
+	{
+		await Parameters.Join.OnAfterCreateChildAsync(ParentRecord.Key, child);
+	}
+
+	public virtual async Task OnRefreshAsync()
+	{
+		await LoadChildRecordsAsync();
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	protected virtual async Task LoadChildRecordsAsync()
+	{
+		ChildRecords = Array.Empty<IDataTableJoinRecord<TChild>>();
+
+		await Parameters.Join.RequestChildrenAsync(ParentRecord.Key);
+
+		ChildRecords = Parameters.Join.CreateTableJoinChildRecords().ToArray();
+	}
+}

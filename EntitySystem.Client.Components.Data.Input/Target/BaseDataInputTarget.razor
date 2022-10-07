@@ -1,0 +1,100 @@
+﻿@using EntitySystem.Client.Components.Data.Input.Target.Property
+@using EntitySystem.Client.Abstract.Domain.Parameters
+@using EntitySystem.Client.Components.Data.Input
+@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Abstract.Domain.Renderer
+@using EntitySystem.Client.Components.Data.Input.Options
+@using EntitySystem.Client.Components.Data.Input.Target.Feature
+@using EntitySystem.Shared.Abstract.Extensions
+
+@typeparam TParent
+@typeparam TChild
+@inherits BaseRendered<BaseDataInput<IDataInputTargetProperty<TParent, TChild>, TParent, TChild>>
+@implements IParameters
+
+@code {
+	public IDataInputOptions Options => Parameters.Options;
+
+	public IDataInputTargetProperty<TParent, TChild> Property => Parameters.Property;
+
+	public TParent Entity => Parameters.Entity;
+
+	public TChild Value => Property.Getter(Entity);
+
+	public virtual List<TChild> List { get; set; }
+
+	public virtual string Text { get; set; }
+
+	protected override async Task OnParametersSetAsync()
+	{
+		foreach (var feature in Parameters.Features.GetFeatures<IDataInputTargetStartFeature>())
+			await feature.OnParametersSetAsync(this);
+
+		if (Value != null) Text = Property.ChildNameGetter(Value);
+	}
+
+	public virtual IEnumerable<IRenderer> GetItems()
+	{
+		return Parameters.Features
+			.GetFeatures<IDataInputTargetItemFeature>()
+			.SelectMany(f => f.Build(this));
+	}
+
+	public virtual async Task OnFocusAsync()
+	{
+		Text = null;
+
+		await SearchAsync();
+	}
+
+	public virtual async Task OnSearchAsync(string text)
+	{
+		Text = text;
+
+		await SearchAsync();
+	}
+
+	public virtual async Task OnCancelAsync()
+	{
+		Text = Value == null ? null : Property.ChildNameGetter(Value);
+
+		await CancelAsync();
+	}
+
+	public virtual async Task OnSelectAsync(TChild child)
+	{
+		Text = Property.ChildNameGetter(child);
+
+		await FinishAsync(child);
+	}
+
+	public virtual async Task SearchAsync()
+	{
+		var expression = string.IsNullOrEmpty(Text) ? null : Property.ChildNameExpression.Compose(v => v == Text);
+
+		List = await Property.GetTargetChildSource().GetTargetHintsAsync(expression);
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public virtual async Task CancelAsync()
+	{
+		List = null;
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public virtual async Task FinishAsync(TChild child)
+	{
+		List = null;
+
+		await SetChildAsync(child);
+	}
+
+	public virtual async Task SetChildAsync(TChild child)
+	{
+		Property.Setter(Entity, child);
+
+		await Options.OnChangeAsync();
+	}
+}

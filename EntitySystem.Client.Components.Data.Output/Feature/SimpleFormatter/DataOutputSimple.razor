@@ -1,0 +1,30 @@
+﻿@using EntitySystem.Client.Abstract.Components
+
+@typeparam TKey
+@typeparam TEntity
+@typeparam TValue
+@inherits BaseRendered<BaseDataOutput<TKey, TEntity, TValue>>
+
+@GetSimpleTextOutput()
+
+@code {
+	public string GetSimpleTextOutput(int valuesCount = 5)
+	{
+		return $"{ComposeObjectValues(valuesCount)}{GetTrimInformation(valuesCount)}";
+	}
+
+	public string GetTrimInformation(int valuesCount)
+	{
+		return Parameters.Object.Entities.Count >= valuesCount ? "..." : string.Empty;
+	}
+
+	public string ComposeObjectValues(int valuesCount)
+	{
+		return string.Join(", ", GetObjectTextValues().Take(valuesCount).Distinct());
+	}
+
+	public IEnumerable<string> GetObjectTextValues()
+	{
+		return Parameters.Object.Entities.Select(Parameters.Property.ToString).Where(t => !string.IsNullOrEmpty(t));
+	}
+}

@@ -1,0 +1,77 @@
+﻿@using EntitySystem.Client.Components.Data.Header.Options
+@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Record.List.Parameters
+@using EntitySystem.Client.Abstract.Domain.Parameters
+@using EntitySystem.Client.Abstract.Domain.Renderer
+@using EntitySystem.Client.Components.Data.Record.List.Feature
+@using EntitySystem.Client.Components.Data.Record.List.Item
+@using EntitySystem.Client.Components.Data.Record.List.Options
+@using EntitySystem.Client.Components.Data.Record.List.Source
+@using EntitySystem.Client.Components.Data.Output.Options
+@using EntitySystem.Client.Components.Data.Record.List.Feature.SelectBox
+
+@typeparam TKey
+@inherits BaseRendered<IDataRecordListParameters<TKey>>
+@implements IDataHeaderOptions
+@implements IDataOutputOptions
+@implements IParameters
+
+@code {
+	public IDataRecordListOptions<TKey> Options => Parameters.Options;
+
+	public IDataRecordListSource<TKey> Source => Options.GetRecordListSource();
+
+	public IEnumerable<IDataRecordListItem<TKey>> Records => Parameters.Options.GetRecordListItems();
+
+	public IEnumerable<IDataRecordListItem<TKey>> Selected => Records.Where(r => r.Features.HasFeature<DataRecordListSelectedItemFeature>());
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await base.OnParametersSetAsync();
+
+        foreach (var feature in Parameters.Features.GetFeatures<IDataRecordListStartFeature>())
+            await feature.OnParametersSetAsync(this);
+    }
+
+    public virtual async Task OnRefreshAsync()
+	{
+		await Options.OnRefreshAsync();
+	}
+
+	public virtual async Task OnChangeAsync()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public virtual IEnumerable<IRenderer> BuildTags()
+	{
+	    var general = Parameters.Features
+	        .GetFeatures<IDataRecordListTagFeature>()
+	        .SelectMany(f => f.Build(this));
+
+	    foreach (var renderer in general)
+	        yield return renderer;
+
+	    var specific = Parameters.Features
+	        .GetFeatures<IDataRecordListTagFeature<TKey>>()
+	        .SelectMany(f => f.Build(this));
+
+	    foreach (var renderer in specific)
+	        yield return renderer;
+	}
+
+    public virtual IEnumerable<IDataRecordListColumnFeature> GetColumnFeatures()
+    {
+        return Parameters.Features.GetFeatures<IDataRecordListColumnFeature>();
+    }
+
+	public IEnumerable<IRenderer> BuildHeaders()
+	{
+		return GetColumnFeatures().SelectMany(c => c.BuildHeader(this));
+	}
+
+    public IEnumerable<IEnumerable<IRenderer>> BuildOutputs()
+	{
+		return Records.Select((r, i) => GetColumnFeatures().SelectMany(c => c.BuildOutput(this, r, i)));
+	}
+}

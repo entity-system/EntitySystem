@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Pager\**" />
+    <Content Remove="Pager\**" />
+    <EmbeddedResource Remove="Pager\**" />
+    <None Remove="Pager\**" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\EntitySystem.Client.Abstract\EntitySystem.Client.Abstract.csproj" />
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Entity.Dialog\EntitySystem.Client.Components.Data.Entity.Dialog.csproj" />
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Header\EntitySystem.Client.Components.Data.Header.csproj" />
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Output\EntitySystem.Client.Components.Data.Output.csproj" />
+  </ItemGroup>
+
+</Project>

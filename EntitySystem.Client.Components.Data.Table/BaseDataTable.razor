@@ -1,0 +1,91 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Record.Info
+@using EntitySystem.Client.Components.Data.Record.List.Item
+@using EntitySystem.Client.Components.Data.Table.Parameters
+@using EntitySystem.Client.Components.Data.Record.List.Options
+@using EntitySystem.Client.Components.Data.Record.List.Source
+@using EntitySystem.Client.Components.Data.Table.Options
+@using EntitySystem.Client.Components.Data.Table.Record
+@using EntitySystem.Client.Components.Data.Table.Source
+@using EntitySystem.Client.Components.Data.Record.Info.Options
+@using EntitySystem.Client.Components.Data.Record.Info.Source
+
+@typeparam TEntity
+@inherits BaseRendered<IDataTableParameters<TEntity>>
+@implements IDataRecordInfoOptions<TEntity>
+@implements IDataRecordListOptions<TEntity>
+
+@code {
+	protected IDataTableSource<TEntity> Source => Parameters.Source;
+
+	protected IDataTableOptions Options => Parameters.Options;
+
+	protected virtual bool Detail => Options.Id > 0;
+
+	protected virtual IList<IDataTableRecord<TEntity>> Records { get; private set; } = Enumerable.Empty<IDataTableRecord<TEntity>>().ToArray();
+
+	public virtual bool ShowTitle => true;
+
+	protected override async Task OnParametersSetAsync()
+	{
+		await FillRecordsAsync();
+	}
+
+	public virtual IDataRecordInfoSource<TEntity> GetRecordInfoSource()
+	{
+		return Parameters.Source;
+	}
+
+	public virtual IDataRecordListSource<TEntity> GetRecordListSource()
+	{
+		return Parameters.Source;
+	}
+
+	public virtual IDataRecordInfo<TEntity> GetRecordInfo()
+	{
+		return Records.FirstOrDefault();
+	}
+
+	public virtual IEnumerable<IDataRecordListItem<TEntity>> GetRecordListItems()
+	{
+		return Records;
+	}
+
+	public virtual Task OnAfterCreateEntityAsync(TEntity key)
+	{
+		return Task.CompletedTask;
+	}
+
+	public virtual async Task OnBeforeSaveOrUpdateAsync(TEntity entity)
+	{
+		await Task.CompletedTask;
+	}
+
+	public virtual async Task OnRefreshAsync()
+	{
+		await FillRecordsAsync();
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	protected virtual async Task FillRecordsAsync()
+	{
+		if (Detail) await LoadRecordsAsync();
+
+		else await LoadRecordsNestedAsync();
+	}
+
+	protected virtual async Task LoadRecordsAsync()
+	{
+		await Source.RequestAsync();
+
+		Records = Source.CreateTableRecords().ToArray();
+	}
+
+	protected virtual async Task LoadRecordsNestedAsync()
+	{
+		await Source.RequestNestedAsync();
+
+		Records = Source.CreateTableRecordsNested().ToArray();
+	}
+}

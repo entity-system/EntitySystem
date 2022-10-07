@@ -1,0 +1,92 @@
+﻿@using EntitySystem.Client.Components.Data.Record.Info.Parameters
+@using EntitySystem.Client.Components.Data.Record.Info.Source
+@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Abstract.Domain.Renderer
+@using EntitySystem.Client.Components.Data.Input.Options
+@using EntitySystem.Client.Abstract.Domain.Parameters
+@using EntitySystem.Client.Abstract.Extensions
+@using EntitySystem.Client.Components.Data.Record.Info.Feature
+@using EntitySystem.Client.Components.Data.Record.Info.Options
+@using Microsoft.AspNetCore.Components.Routing
+@using EntitySystem.Client.Components.Data.Table.Join.Options
+@using EntitySystem.Client.Components.Data.Table.Join.Record
+
+@typeparam TKey
+@inherits BaseRendered<IDataRecordInfoParameters<TKey>>
+@implements IDataInputOptions
+@implements IParameters
+@implements IDataTableJoinOptions<TKey>
+
+@inject NavigationManager _navigationManager
+
+@code {
+	public int AnchorIndex => _navigationManager.GetAnchorIndex();
+
+	public IDataRecordInfo<TKey> Record => Parameters.Options.GetRecordInfo();
+
+	public IDataRecordInfoSource<TKey> Source => Record.GetRecordInfoSource();
+
+	public IDataRecordInfoOptions<TKey> Options => Parameters.Options;
+
+	public TKey Key => Options.GetRecordInfo().Key;
+
+	public virtual bool ReadOnly => true;
+
+	public virtual bool IsNewEntity => false;
+
+	public virtual IDataTableJoinRecord<TKey> GetJoinRecord()
+	{
+		return Record;
+	}
+
+	protected override void OnInitialized()
+	{
+		_navigationManager.LocationChanged += OnLocationChanged;
+	}
+
+	public virtual void OnLocationChanged(object sender, LocationChangedEventArgs e)
+	{
+		StateHasChanged();
+	}
+
+	public virtual async Task OnChangeAsync()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public virtual IEnumerable<IRenderer> GetTags()
+	{
+		return Parameters.Features
+			.GetFeatures<IDataRecordInfoTagFeature>()
+			.SelectMany(f => f.Build(this));
+	}
+
+	public virtual IEnumerable<IRenderer> GetInputs()
+	{
+		return Source
+			.GetRecordInfoProperties()
+		    .Where(p => p.Features.GetFeatures<IDataRecordInfoPropertyFilterFeature>().All(f => f.Filter(this, p)))
+			.Select(p => p.BuildInput(Record.Key, this));
+	}
+
+	public virtual IEnumerable<IRenderer> GetTabs()
+	{
+		return Parameters.Features
+			.GetFeatures<IDataRecordInfoTabFeature>()
+			.SelectMany(f => f.BuildTab(this));
+	}
+
+	public virtual IRenderer GetTabContent()
+	{
+		return Parameters.Features
+			.GetFeatures<IDataRecordInfoTabFeature>()
+			.SelectMany(f => f.BuildContent(this))
+			.OrderBy(f => f.Priority)
+			.FirstOrDefault();
+	}
+
+	public void Dispose()
+	{
+		_navigationManager.LocationChanged -= OnLocationChanged;
+	}
+}

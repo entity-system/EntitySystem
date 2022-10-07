@@ -1,0 +1,17 @@
+﻿@using EntitySystem.Client.Components.Form.Input.Search
+
+@typeparam TParent
+@typeparam TChild
+@inherits BaseDataInputTarget<TParent, TChild>
+
+<FormInputSearch Guid="@Parameters.Guid" Smaller="true" Search="@Text" OnFocus="@OnFocusAsync" OnSearch="@OnSearchAsync"/>
+@if (GetItems().Any())
+{
+    <div style="position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: 1" @onclick="OnCancelAsync"></div>
+    <div class="list-group" style="position: fixed; z-index: 1;">
+        @foreach (var item in GetItems().OrderBy(i => i.Priority))
+        {
+            @item.Render()
+        }
+    </div>
+}

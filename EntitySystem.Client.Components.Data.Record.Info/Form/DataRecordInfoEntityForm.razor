@@ -1,0 +1,25 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using EntitySystem.Client.Abstract.Domain.Renderer
+
+@typeparam TKey
+
+<EditForm Model="@Record.Key">
+	<div class="card-body">
+		<h5 class="card-title">@Title</h5>
+		@foreach (var input in Inputs)
+		{
+			@input.Render()
+		}
+	</div>
+</EditForm>
+
+@code {
+	[Parameter]
+	public IDataRecordInfo<TKey> Record { get; set; }
+
+	[Parameter]
+	public string Title { get; set; }
+
+	[Parameter]
+	public IEnumerable<IRenderer> Inputs { get; set; }
+}

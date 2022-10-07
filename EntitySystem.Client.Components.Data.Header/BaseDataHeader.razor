@@ -1,0 +1,25 @@
+﻿@using EntitySystem.Client.Components.Data.Header.Parameters
+@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Header.Options
+@using EntitySystem.Client.Components.Data.Header.Origin
+@using EntitySystem.Client.Components.Data.Header.Property
+
+@typeparam TProperty where TProperty : IDataHeaderProperty<TEntity, TValue>
+@typeparam TEntity
+@typeparam TValue
+@inherits BaseRendered<IDataHeaderParameters<TProperty, TEntity, TValue>>
+
+@code {
+	public TProperty Property => Parameters.Property;
+
+	public IDataHeaderOptions Options => Parameters.Options;
+
+	public IDataHeaderOrigin<TEntity> Origin => Parameters.Origin;
+
+	public bool ShowDropdown { get; set; }
+
+	public virtual void ToggleDropdown()
+	{
+		ShowDropdown = !ShowDropdown;
+	}
+}

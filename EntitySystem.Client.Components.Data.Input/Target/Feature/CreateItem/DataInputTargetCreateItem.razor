@@ -1,0 +1,7 @@
+﻿@using EntitySystem.Client.Abstract.Components
+
+@typeparam TParent
+@typeparam TChild
+@inherits BaseRendered<BaseDataInputTarget<TParent, TChild>>
+
+<button type="button" class="list-group-item list-group-item-action" @onclick="@Parameters.OnCreateAsync"><strong>create</strong></button>

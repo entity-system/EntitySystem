@@ -1,0 +1,28 @@
+﻿@using EntitySystem.Client.Components.Data.Input.Property
+@using EntitySystem.Client.Components.Data.Input.Parameters
+@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Input.Options
+@using EntitySystem.Client.Abstract.Domain.Parameters
+@using EntitySystem.Client.Components.Data.Input.Feature
+
+@typeparam TProperty where TProperty : IDataInputProperty<TEntity, TValue>
+@typeparam TEntity
+@typeparam TValue
+@inherits BaseRendered<IDataInputParameters<TProperty, TEntity, TValue>>
+@implements IParameters
+
+@code {
+	public System.Guid Guid { get; set; } = System.Guid.NewGuid();
+
+	public TProperty Property => Parameters.Property;
+
+	public TEntity Entity => Parameters.Entity;
+
+	public IDataInputOptions Options => Parameters.Options;
+
+	public bool ReadOnly => Options.ReadOnly || Property.Features.HasFeature<DataInputReadOnlyFeature>();
+
+	public TValue GetValue() => Property.Getter(Entity);
+
+	public void SetValue(TValue value) => Property.Setter(Entity, value);
+}

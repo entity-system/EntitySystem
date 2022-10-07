@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+
+@typeparam TEntity
+@inherits BaseDataEntityDialog<TEntity>
+
+<div class="modal show" tabindex="-1" role="dialog" style="display:block">
+	<div class="modal-dialog">
+		<EditForm Model="@Entity" OnValidSubmit="@OnSaveOrUpdateAsync">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">@Source.Name</h5>
+					<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" @onclick="OnCloseAsync">
+					</button>
+				</div>
+				<div class="modal-body">
+					<ObjectGraphDataAnnotationsValidator />
+					<div class="mt-2">
+						<ValidationSummary/>
+					</div>
+					@foreach (var input in GetInputs().OrderBy(p => p.Priority))
+					{
+						@input.Render()
+					}
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary">@(IsNewEntity ? "Add" : "Update")</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="OnCloseAsync">Close</button>
+				</div>
+			</div>
+		</EditForm>
+	</div>
+</div>
+<div class="modal-backdrop fade show"></div>

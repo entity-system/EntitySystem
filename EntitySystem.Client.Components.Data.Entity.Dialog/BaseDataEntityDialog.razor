@@ -1,0 +1,72 @@
+﻿@using EntitySystem.Client.Components.Data.Entity.Dialog.Parameters
+@using EntitySystem.Client.Components.Data.Input.Options
+@using EntitySystem.Client.Components.Data.Entity.Dialog.Feature
+@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Abstract.Domain.Renderer
+@using EntitySystem.Client.Components.Data.Entity.Dialog.Exceptions
+@using EntitySystem.Client.Components.Data.Entity.Dialog.Options
+@using EntitySystem.Client.Components.Data.Entity.Dialog.Source
+
+@typeparam TEntity
+@inherits BaseRendered<IDataEntityDialogParameters<TEntity>>
+@implements IDataInputOptions
+
+@code {
+	public IDataEntityDialogOptions<TEntity> Options => Parameters.Options;
+
+	public IEntityDialogSource<TEntity> Source => Options.GetEntityDialogSource();
+
+	public TEntity Entity { get; set; }
+
+	public virtual bool ReadOnly => false;
+
+	public virtual bool IsNewEntity => Source.IsNew(Entity);
+
+	protected override async Task OnParametersSetAsync()
+	{
+		Entity = Options.Entity ?? await Options.CreateEntityAsync();
+
+		foreach (var feature in Parameters.Features.GetFeatures<IDataEntityDialogStartFeature>())
+			await feature.OnParametersSetAsync(this);
+	}
+
+	public virtual IEnumerable<IRenderer> GetInputs()
+	{
+	    return Source
+			.GetEntityDialogProperties()
+	        .Where(p => !p.Features.GetFeatures<IDataEntityDialogPropertyFilter>().Any(f => f.IsHidden(this, p)))
+	        .Select(p => p.BuildInput(Entity, this));
+	}
+
+	public virtual async Task OnSaveOrUpdateAsync()
+	{
+	    try
+	    {
+	        var isNew = Source.IsNew(Entity);
+
+	        var entity = await Source.SaveOrUpdateAsync(Entity);
+
+	        if (isNew) await Options.OnAfterSaveAsync(entity);
+
+	        else await Options.OnAfterUpdateAsync();
+	    }
+	    catch (Exception e) when (e is IRedirectedException)
+	    {
+	        Source.ResetProperties();
+
+	        await Options.OnAfterUpdateAsync();
+	    }
+	}
+
+	public virtual async Task OnCloseAsync()
+	{
+		Source.ResetProperties();
+
+		await Options.OnCloseAsync();
+	}
+
+	public virtual async Task OnChangeAsync()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
+}

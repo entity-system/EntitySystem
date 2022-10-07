@@ -1,0 +1,20 @@
+﻿@using EntitySystem.Client.Components.Data.Output.Feature
+@using EntitySystem.Client.Abstract.Domain.Renderer
+
+@typeparam TKey
+@typeparam TEntity
+@typeparam TValue
+@inherits BaseDataOutput<TKey, TEntity, TValue>
+
+@GetOutput().Render()
+
+@code {
+	IRenderer GetOutput()
+	{
+		return Parameters.Features
+			.GetFeatures<IDataOutputFormatter>()
+			.SelectMany(f => f.Build(this))
+			.OrderBy(r => r.Priority)
+		    .First();
+	}
+}

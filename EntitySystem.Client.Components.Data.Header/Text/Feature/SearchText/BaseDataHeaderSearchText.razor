@@ -1,0 +1,31 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Header.Text.Property
+@using EntitySystem.Shared.Abstract.Extensions
+@using EntitySystem.Client.Abstract.Domain.Parameters
+@using EntitySystem.Client.Abstract.Domain.Renderer
+
+@typeparam TEntity
+@inherits BaseRendered<DataHeaderSearchTextParameters<TEntity>>
+@implements IParameters
+
+@code {
+	public IDataHeaderTextProperty<TEntity> Property => Parameters.HeaderText.Property;
+
+	public virtual List<TEntity> List { get; set; }
+
+	public virtual async Task OnSearchAsync(string text)
+	{
+		var expression = string.IsNullOrEmpty(text) ? null : Property.Expression.Compose(v => v == text);
+
+		List = await Property.GetDataHeaderSource().GetFilterHintsAsync(expression);
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public virtual IEnumerable<IRenderer> GetItems()
+	{
+		return Parameters.Features
+			.GetFeatures<IDataHeaderSearchTextItemFeature>()
+			.SelectMany(f => f.Build(this));
+	}
+}

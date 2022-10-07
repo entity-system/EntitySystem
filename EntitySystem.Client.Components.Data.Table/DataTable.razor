@@ -1,0 +1,16 @@
+﻿@typeparam TEntity
+@inherits BaseDataTable<TEntity>
+
+@* ReSharper disable once ConvertIfStatementToSwitchStatement *@
+@if (Detail && Records.Any())
+{
+	@Source.BuildRecordInfo(this).Render()
+}
+else if(!Detail)
+{
+	@Source.BuildRecordList(this).Render()
+}
+
+@code {
+
+}

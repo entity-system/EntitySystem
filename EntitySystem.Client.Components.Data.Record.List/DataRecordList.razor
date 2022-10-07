@@ -1,0 +1,37 @@
+﻿@typeparam TKey
+@inherits BaseDataRecordList<TKey>
+
+<div class="container-fluid p-0">
+	<div class="row bg-body shadow-sm p-2" style="--bs-gutter-x: 0; font-size: 0">
+		<div class="col">
+			@foreach (var tag in BuildTags().OrderBy(t => t.Priority))
+			{
+				<span style="vertical-align: middle">@tag.Render()</span>
+			}
+		</div>
+	</div>
+</div>
+<table class="table table-striped" style="width: 100%">
+	<thead>
+	<tr>
+		@foreach (var header in BuildHeaders().OrderBy(t => t.Priority))
+		{
+			<th>@header.Render()</th>
+		}
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var row in BuildOutputs())
+	{
+		<tr>
+			@foreach (var column in row.OrderBy(t => t.Priority))
+			{
+				<td>@column.Render()</td>
+			}
+		</tr>
+	}
+	</tbody>
+</table>
+
+@code {
+}

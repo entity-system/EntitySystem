@@ -1,0 +1,13 @@
+﻿@using EntitySystem.Client.Components.Data.Input.Property
+
+@typeparam TProperty where TProperty : IDataInputProperty<TEntity, TValue>
+@typeparam TEntity
+@typeparam TValue
+@inherits BaseDataInput<TProperty, TEntity, TValue>
+
+<div class="mb-1 row">
+	<label for="@Guid" class="col-xl-3 col-form-label col-form-label-sm">@Property.Name:</label>
+	<div class="col-xl-9">
+		@Parameters.BuildInputValue(this).Render()
+	</div>
+</div>

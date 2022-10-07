@@ -1,0 +1,40 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using System.Timers
+
+@typeparam TKey
+@inherits BaseRendered<DataRecordListSelectBoxParameters<TKey>>
+
+<td>
+    <input class="form-check-input" type="checkbox" id="@($"checkbox{Parameters.Index}")" @bind="Selected">
+</td>
+
+@code {
+	private Timer _changeTimer;
+
+	public bool Selected
+	{
+		get => Parameters.Record.Features.HasFeature<DataRecordListSelectedItemFeature>();
+		set
+		{
+			if(value) Parameters.Record.Features.AddFeature<DataRecordListSelectedItemFeature>();
+
+			else Parameters.Record.Features.RemoveFeature<DataRecordListSelectedItemFeature>();
+
+			_changeTimer.Start();
+		}
+	}
+
+	protected override void OnInitialized()
+	{
+		_changeTimer = new Timer(10);
+
+		_changeTimer.Elapsed += ChangeElapsed;
+	}
+
+	async void ChangeElapsed(object sender, ElapsedEventArgs e)
+	{
+		_changeTimer.Stop();
+
+		await Parameters.RecordList.OnChangeAsync();
+	}
+}

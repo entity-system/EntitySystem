@@ -1,0 +1,17 @@
+﻿@using EntitySystem.Client.Components.Data.Input.Text.Property
+@using Microsoft.AspNetCore.Components.Forms
+@using EntitySystem.Client.Abstract.Components
+
+@inherits BaseRendered<BaseDataInput<IDataInputTextProperty<TEntity>, TEntity, string>>
+@typeparam TEntity
+
+<InputText disabled="@Parameters.ReadOnly" readonly="@Parameters.ReadOnly" type="text" @bind-Value="@Value" class="form-control form-control-sm" id="@Parameters.Guid"/>
+
+@code
+{
+	public string Value
+	{
+		get => Parameters.GetValue();
+		set => Parameters.SetValue(value);
+	}
+}

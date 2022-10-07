@@ -1,0 +1,13 @@
+﻿@using EntitySystem.Client.Abstract.Domain.Feature
+@using EntitySystem.Client.Abstract.Domain.Parameters
+
+@typeparam TParameters where TParameters : IParameters
+
+@implements IFeatured
+
+@code {
+    public Features Features => Parameters.Features;
+
+	[Parameter]
+	public TParameters Parameters { get; set; }
+}

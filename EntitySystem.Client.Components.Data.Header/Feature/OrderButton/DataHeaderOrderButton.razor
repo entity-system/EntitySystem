@@ -1,0 +1,20 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Header.Property
+
+@typeparam TProperty where TProperty : IDataHeaderProperty<TEntity, TValue>
+@typeparam TEntity
+@typeparam TValue
+@inherits BaseRendered<DataHeaderOrderButtonParameters<TProperty, TEntity, TValue>>
+
+<button class="btn dropdown-item" @onclick="OnOrderByAsync">@Parameters.Text</button>
+
+@code {
+	public async Task OnOrderByAsync()
+	{
+		Parameters.DataHeader.Origin.Order(Parameters.Descending);
+
+		Parameters.DataHeader.ToggleDropdown();
+
+		await Parameters.DataHeader.Options.OnRefreshAsync();
+	}
+}

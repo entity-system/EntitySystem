@@ -1,0 +1,31 @@
+﻿@using EntitySystem.Client.Abstract.Components
+
+@typeparam TKey
+@inherits BaseRendered<DataRecordListOrderParameters<TKey>>
+
+<span class="h5">
+	<span class="badge rounded-pill bg-light text-dark me-1">
+		@if (Parameters.Order.Descending)
+		{
+			<i class="bi-arrow-down"></i>
+		}
+		else
+		{
+			<i class="bi-arrow-up"></i>
+		}
+		@Parameters.Order.Name
+		<button class="btn btn-link" type="button" @onclick="OnRemoveAsync">
+			<i class="bi-x-circle"></i>
+		</button>
+	</span>
+</span>
+
+@code
+{
+	public async Task OnRemoveAsync()
+	{
+		Parameters.Order.UnAssign();
+
+		await Parameters.RecordList.Options.OnRefreshAsync();
+	}
+}

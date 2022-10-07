@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.1" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <ProjectReference Include="..\EntitySystem.Client.Abstract\EntitySystem.Client.Abstract.csproj" />
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Record.Info\EntitySystem.Client.Components.Data.Record.Info.csproj" />
+    <ProjectReference Include="..\EntitySystem.Client.Components.Data.Record.List\EntitySystem.Client.Components.Data.Record.List.csproj" />
+  </ItemGroup>
+
+</Project>

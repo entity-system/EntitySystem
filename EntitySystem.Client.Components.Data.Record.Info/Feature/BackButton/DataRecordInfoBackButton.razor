@@ -1,0 +1,9 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Abstract.Extensions
+
+@typeparam TKey
+@inherits BaseRendered<DataRecordInfoBackButtonParameters<TKey>>
+
+@inject NavigationManager _navigationManager;
+
+<a href="@_navigationManager.CreateLink(Parameters.Link)" class="btn btn-outline-primary me-1">Back</a>

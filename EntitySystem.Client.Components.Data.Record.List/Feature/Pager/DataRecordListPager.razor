@@ -1,0 +1,101 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Record.List.Source
+
+@inject NavigationManager _navigationManager
+
+@typeparam TKey
+@inherits BaseRendered<BaseDataRecordList<TKey>>
+
+<div style="display: inline-block; float: right; font-size: 1rem">
+	<select id="page-size" class="form-select" style="display: inline-block; width: 100px" @bind="Size">
+		@foreach (var size in new[] { 10, 20, 50, 100 }.Union(new []{Size}).OrderBy(i => i))
+		{
+			@if (size == Size)
+			{
+				<option value="@size" selected>@size</option>
+			}
+			else
+			{
+				<option value="@size">@size</option>
+			}
+		}
+	</select>
+	<span class="px-1">of @Parameters.Source.MasterCount</span>
+	<div style="display: inline-block">
+		<nav aria-label="Page navigation">
+			<div class="pagination" style="margin-block-end: 0">
+				@if (CurrentPage > PageCount + 2)
+				{
+					<button class="page-link"@onclick="@(async () => await GoToPage(1))">1</button>
+					<div class="page-item disabled"><button class="page-link">...</button></div>
+					foreach (var i in Enumerable.Range(CurrentPage - PageCount, PageCount))
+					{
+						<div class="page-item"><button class="page-link" @onclick="@(async () => await GoToPage(i))">@i</button></div>
+					}
+				}
+				else
+				{
+					foreach (var i in Enumerable.Range(1, CurrentPage - 1))
+					{
+						<div class="page-item"><button class="page-link" @onclick="@(async () => await GoToPage(i))">@i</button></div>
+					}
+				}
+				<div class="page-item active"><button class="page-link">@CurrentPage</button></div>
+
+				@if (MaximumPage - CurrentPage < PageCount + 2)
+				{
+					var count = MaximumPage - CurrentPage;
+
+					if (count < 0) count = 0;
+
+					foreach (var i in Enumerable.Range(CurrentPage + 1, count))
+					{
+						<div class="page-item"><button class="page-link" @onclick="@(async () => await GoToPage(i))">@i</button></div>
+					}
+				}
+				else
+				{
+					foreach (var i in Enumerable.Range(CurrentPage + 1, PageCount))
+					{
+						<div class="page-item"><button class="page-link" @onclick="@(async () => await GoToPage(i))">@i</button></div>
+					}
+					<div class="page-item disabled"><button class="page-link">...</button></div>
+					<div class="page-item"><button class="page-link"@onclick="@(async () => await GoToPage(MaximumPage))">@MaximumPage</button></div>
+				}
+			</div>
+		</nav>
+	</div>
+</div>
+
+@code {
+	public IDataRecordListSource<TKey> Source => Parameters.Source;
+
+	public int Size
+	{
+		get => Source.Limit;
+		set
+		{
+			Source.Limit = value;
+
+			Refresh().Wait();
+		}
+	}
+
+	public int PageCount { get; set; } = 2;
+
+	public int CurrentPage => 1 + Source.Offset / Source.Limit;
+
+	public int MaximumPage => (Source.MasterCount + Source.Limit - 1) / Source.Limit;
+
+	private async Task GoToPage(int page)
+	{
+		Source.Offset = (page - 1) * Source.Limit;
+
+		await Refresh();
+	}
+
+	private async Task Refresh()
+	{
+		await Parameters.Options.OnRefreshAsync();
+	}
+}

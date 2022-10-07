@@ -1,0 +1,17 @@
+﻿@using EntitySystem.Client.Components.Data.Input
+@using EntitySystem.Client.Components.Data.Input.Guid.Property
+@using EntitySystem.Client.Abstract.Components
+@using Microsoft.AspNetCore.Components.Forms
+
+@typeparam TEntity
+@inherits BaseRendered<BaseDataInput<IDataInputGuidProperty<TEntity>, TEntity, Guid>>
+
+<InputText disabled="@Parameters.ReadOnly" readonly="@Parameters.ReadOnly" type="text" @bind-Value="@Value" class="form-control form-control-sm" id="@Parameters.Guid"/>
+
+@code {
+	public string Value
+    {
+        get => $"{Parameters.GetValue()}";
+        set => Parameters.SetValue(new Guid(value));
+    }
+}

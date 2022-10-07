@@ -1,0 +1,16 @@
+﻿@using EntitySystem.Client.Components.Data.Input.Long.Property
+@using Microsoft.AspNetCore.Components.Forms
+@using EntitySystem.Client.Abstract.Components
+
+@typeparam TEntity
+@inherits BaseRendered<BaseDataInput<IDataInputLongProperty<TEntity>, TEntity, long>>
+
+<InputNumber disabled="@Parameters.ReadOnly" readonly="@Parameters.ReadOnly" type="number" @bind-Value="@Value" class="form-control form-control-sm" id="@Parameters.Guid"/>
+
+@code {
+	public long Value
+	{
+		get => Parameters.GetValue();
+		set => Parameters.SetValue(value);
+	}
+}

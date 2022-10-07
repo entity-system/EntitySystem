@@ -1,0 +1,65 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Abstract.Domain.Renderer
+@using EntitySystem.Client.Components.Data.Entity.Dialog.Options
+@using EntitySystem.Client.Components.Data.Entity.Dialog.Source
+@using EntitySystem.Client.Components.Data.Record.List.Item
+@using EntitySystem.Client.Components.Data.Record.List.Services
+@using EntitySystem.Client.Components.Data.Record.List.Source
+
+@typeparam TEntity
+@inherits BaseRendered<BaseDataRecordList<TEntity>>
+@implements IDataEntityDialogOptions<TEntity>
+@inject IDataRecordListNavigationService _dataRecordListNavigationService
+
+@code
+{
+	protected IRenderer EntityDialogRenderer;
+
+	public IDataRecordListItem<TEntity> Record => Parameters.Selected.FirstOrDefault();
+
+	public TEntity Entity => Record == null ? default : Record.Key;
+
+	public IDataRecordListSource<TEntity> Source => Parameters.Source;
+
+	public IEntityDialogSource<TEntity> GetEntityDialogSource()
+	{
+		return Source;
+	}
+
+	public void OnOpen()
+	{
+		EntityDialogRenderer = Source.BuildEntityDialog(this);
+	}
+
+	public async Task OnCloseAsync()
+	{
+		EntityDialogRenderer = null;
+
+		await InvokeAsync(StateHasChanged);
+	}
+
+	public async Task OnAfterUpdateAsync()
+	{
+		EntityDialogRenderer = null;
+
+		await Parameters.Options.OnRefreshAsync();
+	}
+
+	public async Task OnAfterSaveAsync(TEntity entity)
+	{
+		EntityDialogRenderer = null;
+
+		if (_dataRecordListNavigationService.TryNavigateToRecordInfo(Source, entity)) return;
+
+		await Parameters.Options.OnRefreshAsync();
+	}
+
+	public async Task<TEntity> CreateEntityAsync()
+	{
+		var entity = await Source.CreateEntityAsync();
+
+		await Parameters.Options.OnAfterCreateEntityAsync(entity);
+
+		return entity;
+	}
+}

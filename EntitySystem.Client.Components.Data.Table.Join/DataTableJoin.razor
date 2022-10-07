@@ -1,0 +1,5 @@
+﻿@typeparam TParent
+@typeparam TChild
+@inherits BaseDataTableJoin<TParent, TChild>
+
+@ChildSource.BuildRecordList(this).Render()

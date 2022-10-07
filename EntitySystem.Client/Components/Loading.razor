@@ -1,0 +1,42 @@
+﻿@using EntitySystem.Client.Services
+@inject ILoadingService _loadingService;
+@implements IDisposable
+
+<style>
+    .bd-example-modal-lg .modal-dialog{
+        display: table;
+        position: relative;
+        margin: 0 auto;
+        top: calc(50% - 2rem);
+    }
+  
+    .bd-example-modal-lg .modal-dialog .modal-content{
+        background-color: transparent;
+        border: none;
+    }
+</style>
+
+@if (_loadingService.IsLoading())
+{
+    <div class="modal show fade bd-example-modal-lg" data-backdrop="static" data-keyboard="false" tabindex="-1" style="display: block">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content" style="width: 2rem">
+                <div class="spinner-border" role="status">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show" style="z-index: 8999"></div>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        _loadingService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        _loadingService.OnChange -= StateHasChanged;
+    }
+}

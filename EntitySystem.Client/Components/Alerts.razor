@@ -1,0 +1,64 @@
+﻿@using EntitySystem.Client.Services
+@inject IAlertService _alertService;
+
+<style>
+    .alert-fixed {
+        position:fixed; 
+        bottom: 0; 
+        right: 0; 
+        width: 25%;
+        z-index:9999;
+        display: inline-block;
+        margin: 2rem;
+    }
+</style>
+
+<div class="alert-fixed">
+    @foreach (var (key, (type, text)) in _alertService.GetAll())
+    {
+        switch (type)
+        {
+            case AlertType.Error:
+
+                <div class="alert float-end w-100 alert-danger alert-dismissible fade show" role="alert">
+                    @text
+                    <button type="button" class="btn btn-close btn-sm" aria-label="Close" @onclick="() => _alertService.Remove(key)"></button>
+                </div>
+            break;
+
+            case AlertType.Success:
+                <div class="alert float-end w-100 alert-success alert-dismissible fade show" role="alert">
+                    @text
+                    <button type="button" class="btn btn-close btn-sm" aria-label="Close" @onclick="() => _alertService.Remove(key)"></button>
+                </div>
+            break;
+
+            case AlertType.Warning:
+                <div class="alert float-end w-100 alert-warning alert-dismissible fade show" role="alert">
+                    @text
+                    <button type="button" class="btn btn-close btn-sm" aria-label="Close" @onclick="() => _alertService.Remove(key)"></button>
+                </div>
+            break;
+            
+            case AlertType.Info:
+            default:
+                <div class="alert float-end w-100 alert-info alert-dismissible fade show" role="alert">
+                    @text
+                    <button type="button" class="btn btn-close btn-sm" aria-label="Close" @onclick="() => _alertService.Remove(key)"></button>
+                </div>
+            break;
+        }
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        _alertService.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        _alertService.OnChange -= StateHasChanged;
+    }
+}

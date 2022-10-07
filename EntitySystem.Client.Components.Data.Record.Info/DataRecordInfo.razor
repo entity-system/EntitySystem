@@ -1,0 +1,47 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+
+@typeparam TKey
+@inherits BaseDataRecordInfo<TKey>
+
+<div class="bg-body shadow-sm p-2" style="font-size: 0">
+    @foreach (var tag in GetTags().OrderBy(t => t.Priority))
+    {
+        @tag.Render()
+    }
+</div>
+<div class="container m-0 pt-2">
+	<div class="row">
+		<div class="col-md-8">
+			<div class="card">
+				<EditForm Model="@Record.Key">
+					<div class="card-body">
+						<h5 class="card-title">@Source.Name</h5>
+						@foreach (var input in GetInputs().OrderBy(i => i.Priority))
+						{
+							@input.Render()
+						}
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container-fluid m-0 pt-2">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="card">
+				<div class="card-body">
+                    <div class="nav nav-tabs">
+						@foreach (var tab in GetTabs().OrderBy(t => t.Priority))
+						{
+							<div class="nav-item">
+								@tab.Render()
+							</div>
+						}
+					</div>
+					@GetTabContent()?.Render()
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

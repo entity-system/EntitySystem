@@ -1,0 +1,61 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Components.Data.Output.Object
+@using EntitySystem.Client.Components.Data.Output.Parameters
+@using EntitySystem.Client.Components.Data.Output.Property
+@using EntitySystem.Client.Components.Data.Output.Record
+@using EntitySystem.Client.Components.Data.Output.Value
+@using EntitySystem.Client.Abstract.Domain.Parameters
+
+@typeparam TKey
+@typeparam TEntity
+@typeparam TValue
+@inherits BaseRendered<IDataOutputParameters<TKey, TEntity, TValue>>
+@implements IParameters
+
+@code {
+	public IDataOutputValue<TKey, TEntity, TValue> Value => Parameters.Value;
+
+	public IDataOutputProperty<TEntity, TValue> Property => Value.GetOutputProperty();
+
+	public IDataOutputObject<TKey, TEntity> Object => Value.GetOutputObject();
+
+	public IDataOutputRecord<TKey> Record => Object.GetOutputRecord();
+
+    /*[Parameter]
+    public IDataOutput<TKey, TEntity, TValue> Value { get; set; }
+
+    [Parameter]
+    public EventCallback<RenderFragment> OnEntityOpen { get; set; }
+
+    [Parameter]
+    public EventCallback<DataEntityAction<TKey>> OnEntityAction { get; set; }*/
+
+	/*public virtual string Stringify()
+	{
+		return $"{string.Join(", ", Object.Entities.Select(Property.ToString).Distinct())}{(Object.Entities.Count >= 5 ? "..." : string.Empty)}";
+	}*/
+
+	/*public async Task OnClick()
+    {
+        var entity = Value.Object.Entities.First();
+
+        await OnEntityOpen.InvokeAsync(Value.Object.Source.RenderEntity(OnEntityAction, Value.Object.Record, entity));
+    }
+
+    private string GetSimple()
+    {
+	    return $"{string.Join(", ", Value.Object.Entities.Select(Value.EntityValueProperty.ToString).Distinct())}{(Value.Object.Entities.Count >= 5 ? "..." : string.Empty)}";
+    }
+
+	private bool CanEdit() => !Value.Object.Record.Source.DoDisableEdit;
+
+    private string GetLink()
+    {
+	    return Value.Object.Record.Link ?? $"{_navigationManager.Uri.TrimEnd('/')}/{Value.Object.Record.GetId()}";
+    }
+
+    private string GetLinkTarget()
+    {
+        return Value.Object.Record.LinkBlank ? "_blank" : "_self";
+    }*/
+}

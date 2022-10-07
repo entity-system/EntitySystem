@@ -1,0 +1,31 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Abstract.Domain.Renderer
+@using EntitySystem.Client.Abstract.Extensions
+@using EntitySystem.Client.Components.Data.Output.Feature.SimpleFormatter
+
+@typeparam TKey
+@typeparam TEntity
+@typeparam TValue
+@inherits BaseRendered<DataOutputLinkParameters<TKey, TEntity, TValue>>
+
+@inject NavigationManager _navigationManager
+
+<a href="@_navigationManager.CreateLink(Parameters.Link)" target="@Parameters.Target">
+    @foreach (var output in GetSimpleOutput())
+    {
+        @output.Render()
+    }
+</a>
+
+@code
+{
+	IEnumerable<IRenderer> GetSimpleOutput()
+	{
+		return Parameters.Output.Parameters
+			.Features.GetFeature<IDataOutputSimpleFormatter>()
+		    .Build(Parameters.Output)
+		    .OrderBy(r => r.Priority);
+	}
+}
+
+

@@ -1,0 +1,17 @@
+﻿@using EntitySystem.Client.Components.Data.Input
+@using EntitySystem.Client.Components.Data.Input.Date.Property
+@using EntitySystem.Client.Components.Form.Input.DateTime
+@using EntitySystem.Client.Abstract.Components
+
+@typeparam TEntity
+@inherits BaseRendered<BaseDataInput<IDataInputDateProperty<TEntity>, TEntity, DateTime?>>
+
+<FormInputDateTime disabled="@Parameters.ReadOnly" readonly="@Parameters.ReadOnly" id="@Parameters.Guid" @bind-Value="Value" class="form-control form-control-sm"></FormInputDateTime>
+
+@code {
+    public DateTime? Value
+    {
+        get => Parameters.GetValue();
+        set => Parameters.SetValue(value);
+    }
+}

@@ -1,0 +1,18 @@
+﻿@using EntitySystem.Client.Abstract.Components
+
+@typeparam TEntity
+@inherits BaseRendered<DataHeaderSearchTextFoundItemParameters<TEntity>>
+
+<button type="button" class="list-group-item list-group-item-action" @onclick="OnClickAsync">@Parameters.HeaderSearch.Parameters.HeaderText.Property.Getter(Parameters.Entity)</button>
+
+@code
+{
+	public virtual async Task OnClickAsync()
+	{
+		Parameters.HeaderSearch.Parameters.HeaderText.Origin.Restrict(Parameters.Entity);
+
+		Parameters.HeaderSearch.Parameters.HeaderText.ToggleDropdown();
+
+		await Parameters.HeaderSearch.Parameters.HeaderText.Options.OnRefreshAsync();
+	}
+}

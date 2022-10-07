@@ -1,0 +1,27 @@
+﻿@using EntitySystem.Client.Abstract.Components
+@using EntitySystem.Client.Abstract.Extensions
+
+@typeparam TKey
+@inherits BaseRendered<DataRecordInfoJoinTabParameters<TKey>>
+
+@inject NavigationManager _navigationManager
+
+@if (IsActive)
+{
+	<button class="nav-link active">@Title</button>
+}
+else
+{
+	<a class="nav-link" href="@GetLink()">@Title</a>
+}
+
+@code {
+	public bool IsActive => Parameters.Index == Parameters.RecordInfo.AnchorIndex;
+
+	public string Title => Parameters.Join.GetRecordInfoChildSource().Name;
+
+	public string GetLink()
+	{
+		return _navigationManager.CreateAnchorIndex(Parameters.Index);
+	}
+}
